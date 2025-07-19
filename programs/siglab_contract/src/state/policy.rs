@@ -1,6 +1,7 @@
 use anchor_lang::prelude::*;
 
-#[derive(Debug, Clone, AnchorSerialize, AnchorDeserialize)]
+#[account]
+#[derive(Debug)]
 pub struct Policy {
     /// Unique policy identifier
     pub id: String,
