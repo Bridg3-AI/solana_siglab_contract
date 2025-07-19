@@ -1,4 +1,7 @@
 use anchor_lang::prelude::*;
+use crate::error::InsuranceError;
+use crate::utils::error_utils::*;
+use crate::{require_authorized, require_not_paused};
 
 #[derive(AnchorSerialize, AnchorDeserialize)]
 pub struct InitializeParams {
@@ -31,20 +34,34 @@ pub struct WithdrawTreasury<'info> {
 }
 
 pub fn initialize_master_contract(
-    _ctx: Context<InitializeMasterContract>,
-    _params: InitializeParams,
+    ctx: Context<InitializeMasterContract>,
+    params: InitializeParams,
 ) -> Result<()> {
+    require!(
+        params.reserve_ratio >= 10 && params.reserve_ratio <= 50,
+        InsuranceError::InvalidParameters
+    );
+    
+    msg!("Initializing master contract with reserve ratio: {}%", params.reserve_ratio);
     Ok(())
 }
 
-pub fn pause_contract(_ctx: Context<PauseContract>) -> Result<()> {
+pub fn pause_contract(ctx: Context<PauseContract>) -> Result<()> {
+    require_authorized!(true); // TODO: Add actual authority check
+    msg!("Contract paused by admin");
     Ok(())
 }
 
-pub fn resume_contract(_ctx: Context<ResumeContract>) -> Result<()> {
+pub fn resume_contract(ctx: Context<ResumeContract>) -> Result<()> {
+    require_authorized!(true); // TODO: Add actual authority check
+    msg!("Contract resumed by admin");
     Ok(())
 }
 
-pub fn withdraw_treasury(_ctx: Context<WithdrawTreasury>, _amount: u64) -> Result<()> {
+pub fn withdraw_treasury(ctx: Context<WithdrawTreasury>, amount: u64) -> Result<()> {
+    require_authorized!(true); // TODO: Add actual authority check
+    require!(amount > 0, InsuranceError::InvalidParameters);
+    
+    msg!("Treasury withdrawal requested: {} lamports", amount);
     Ok(())
 }
