@@ -44,11 +44,43 @@ pub mod siglab_contract {
         instructions::payout::trigger_payout(ctx, oracle_data)
     }
 
+    pub fn register_oracle(
+        ctx: Context<RegisterOracle>,
+        oracle_id: String,
+        oracle_type: OracleType,
+        data_feed_address: String,
+    ) -> Result<()> {
+        instructions::oracle::register_oracle(ctx, oracle_id, oracle_type, data_feed_address)
+    }
+
+    pub fn unregister_oracle(ctx: Context<UnregisterOracle>) -> Result<()> {
+        instructions::oracle::unregister_oracle(ctx)
+    }
+
     pub fn update_oracle_data(
         ctx: Context<UpdateOracleData>,
         data: OracleData,
     ) -> Result<()> {
         instructions::oracle::update_oracle_data(ctx, data)
+    }
+
+    pub fn update_oracle_status(
+        ctx: Context<UpdateOracleStatus>,
+        is_active: bool,
+    ) -> Result<()> {
+        instructions::oracle::update_oracle_status(ctx, is_active)
+    }
+
+    pub fn emergency_oracle_override(
+        ctx: Context<EmergencyOracleOverride>,
+        corrected_data: OracleData,
+        reason: String,
+    ) -> Result<()> {
+        instructions::oracle::emergency_oracle_override(ctx, corrected_data, reason)
+    }
+
+    pub fn reset_oracle_circuit_breaker(ctx: Context<ResetOracleCircuitBreaker>) -> Result<()> {
+        instructions::oracle::reset_oracle_circuit_breaker(ctx)
     }
 
     pub fn pause_contract(ctx: Context<PauseContract>) -> Result<()> {

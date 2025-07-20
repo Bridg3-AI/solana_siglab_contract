@@ -34,6 +34,15 @@ pub struct MasterInsuranceContract {
     /// Last update timestamp
     pub updated_at: i64,
     
+    /// Registry of active oracle pubkeys
+    pub oracle_registry: Vec<Pubkey>,
+    
+    /// Maximum number of oracles allowed
+    pub max_oracles: u8,
+    
+    /// Minimum oracle consensus threshold
+    pub min_consensus_threshold: u8,
+    
     /// Bump seed for PDA
     pub bump: u8,
 }

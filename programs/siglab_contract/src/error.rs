@@ -57,6 +57,21 @@ pub enum InsuranceError {
     #[msg("Oracle is not registered in the system")]
     OracleNotRegistered,
     
+    #[msg("Oracle is currently inactive")]
+    OracleInactive,
+    
+    #[msg("Oracle data is too old and cannot be used")]
+    OracleDataTooOld,
+    
+    #[msg("Maximum number of oracles has been exceeded")]
+    MaxOraclesExceeded,
+    
+    #[msg("Oracle is already registered")]
+    OracleAlreadyRegistered,
+    
+    #[msg("Invalid input provided")]
+    InvalidInput,
+    
     // === Financial Operation Errors ===
     #[msg("Insufficient treasury balance to process payout")]
     InsufficientTreasury,
