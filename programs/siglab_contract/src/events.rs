@@ -86,3 +86,11 @@ pub struct PayoutRejected {
     pub reason: String,
     pub timestamp: i64,
 }
+
+#[event]
+pub struct ReserveRatioUpdated {
+    pub admin: Pubkey,
+    pub old_ratio: u64,
+    pub new_ratio: u64,
+    pub timestamp: i64,
+}

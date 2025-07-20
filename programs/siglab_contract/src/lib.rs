@@ -131,7 +131,21 @@ pub mod siglab_contract {
     pub fn withdraw_treasury(
         ctx: Context<WithdrawTreasury>,
         amount: u64,
+        token_type: TokenType,
     ) -> Result<()> {
-        instructions::admin::withdraw_treasury(ctx, amount)
+        instructions::admin::withdraw_treasury(ctx, amount, token_type)
+    }
+
+    pub fn update_reserve_ratio(
+        ctx: Context<UpdateReserveRatio>,
+        new_reserve_ratio: u64,
+    ) -> Result<()> {
+        instructions::admin::update_reserve_ratio(ctx, new_reserve_ratio)
+    }
+
+    pub fn transfer_authority(
+        ctx: Context<TransferAuthority>,
+    ) -> Result<()> {
+        instructions::admin::transfer_authority(ctx)
     }
 }

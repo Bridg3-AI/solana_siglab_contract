@@ -47,3 +47,23 @@ pub struct MasterInsuranceContract {
     pub bump: u8,
 }
 
+impl MasterInsuranceContract {
+    pub fn space() -> usize {
+        8 + // discriminator
+        32 + // authority
+        4 + (32 * 50) + // policies (assuming max 50 policies)
+        32 + // treasury_account
+        8 + // total_premiums_collected
+        8 + // total_payouts_disbursed
+        8 + // active_policies_count
+        8 + // reserve_ratio
+        1 + // is_paused
+        8 + // created_at
+        8 + // updated_at
+        4 + (32 * 10) + // oracle_registry (max 10 oracles)
+        1 + // max_oracles
+        1 + // min_consensus_threshold
+        1 // bump
+    }
+}
+
