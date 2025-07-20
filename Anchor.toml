@@ -21,7 +21,7 @@ siglab_contract = "8epbA4eCd1ieFndY5y8gZzNqmu91rMUdaY3rDVX5tZKj"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "localnet"
+cluster = "devnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
