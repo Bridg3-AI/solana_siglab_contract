@@ -28,7 +28,7 @@ pub struct PremiumPaid {
 
 #[event]
 pub struct PayoutTriggered {
-    pub policy_id: u64,
+    pub policy_id: String,
     pub beneficiary: Pubkey,
     pub amount: u64,
     pub oracle_value: u64,
@@ -59,5 +59,30 @@ pub struct ContractResumed {
 pub struct TreasuryWithdrawn {
     pub admin: Pubkey,
     pub amount: u64,
+    pub timestamp: i64,
+}
+
+#[event]
+pub struct PayoutExecuted {
+    pub policy_id: String,
+    pub beneficiary: Pubkey,
+    pub amount: u64,
+    pub transaction_signature: String,
+    pub timestamp: i64,
+}
+
+#[event]
+pub struct PayoutApproved {
+    pub policy_id: String,
+    pub admin: Pubkey,
+    pub amount: u64,
+    pub timestamp: i64,
+}
+
+#[event]
+pub struct PayoutRejected {
+    pub policy_id: String,
+    pub admin: Pubkey,
+    pub reason: String,
     pub timestamp: i64,
 }

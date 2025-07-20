@@ -39,9 +39,18 @@ pub mod siglab_contract {
 
     pub fn trigger_payout(
         ctx: Context<TriggerPayout>,
-        oracle_data: OracleData,
+        policy_id: String,
+        oracle_value: u64,
     ) -> Result<()> {
-        instructions::payout::trigger_payout(ctx, oracle_data)
+        instructions::payout::trigger_payout(ctx, policy_id, oracle_value)
+    }
+
+    pub fn execute_payout(ctx: Context<ExecutePayout>) -> Result<()> {
+        instructions::payout::execute_payout(ctx)
+    }
+
+    pub fn approve_payout(ctx: Context<ApprovePayout>) -> Result<()> {
+        instructions::payout::approve_payout(ctx)
     }
 
     pub fn register_oracle(

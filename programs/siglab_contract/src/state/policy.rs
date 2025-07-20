@@ -77,7 +77,7 @@ pub enum InsuranceType {
     Custom,
 }
 
-#[derive(Debug, Clone, AnchorSerialize, AnchorDeserialize)]
+#[derive(Debug, Clone, PartialEq, AnchorSerialize, AnchorDeserialize)]
 pub enum PolicyStatus {
     Active,
     Expired,
