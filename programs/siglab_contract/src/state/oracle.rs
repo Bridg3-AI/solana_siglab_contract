@@ -2,7 +2,6 @@ use anchor_lang::prelude::*;
 
 #[derive(Clone, Copy, Debug, PartialEq, AnchorSerialize, AnchorDeserialize)]
 pub enum OracleType {
-    Chainlink,
     Pyth,
 }
 
@@ -27,7 +26,7 @@ pub struct Oracle {
     pub oracle_id: String,
     /// Authority pubkey that can update this oracle
     pub authority: Pubkey,
-    /// Type of oracle (Chainlink/Pyth)
+    /// Type of oracle (Pyth Network only)
     pub oracle_type: OracleType,
     /// Whether this oracle is currently active
     pub is_active: bool,

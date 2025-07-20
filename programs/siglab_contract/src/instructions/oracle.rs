@@ -113,6 +113,12 @@ pub fn register_oracle(
         InsuranceError::OracleAlreadyRegistered
     );
     
+    // Ensure only Pyth oracle type is supported
+    require!(
+        oracle_type == OracleType::Pyth,
+        InsuranceError::InvalidOracleData
+    );
+    
     // Initialize oracle account
     oracle.oracle_id = oracle_id;
     oracle.authority = ctx.accounts.oracle_authority.key();
@@ -211,35 +217,9 @@ fn create_oracle_message(data: &OracleData) -> Vec<u8> {
     message
 }
 
-/// Parse oracle data based on oracle type (Chainlink/Pyth format)
-pub fn parse_oracle_format(oracle_type: &OracleType, raw_data: &[u8]) -> Result<OracleData> {
-    match oracle_type {
-        OracleType::Chainlink => parse_chainlink_format(raw_data),
-        OracleType::Pyth => parse_pyth_format(raw_data),
-    }
-}
-
-/// Parse Chainlink oracle data format
-fn parse_chainlink_format(raw_data: &[u8]) -> Result<OracleData> {
-    // Chainlink format: value (8 bytes) + timestamp (8 bytes) + confidence (8 bytes)
-    require!(raw_data.len() >= 24, InsuranceError::InvalidOracleData);
-    
-    let value = u64::from_le_bytes(raw_data[0..8].try_into().unwrap());
-    let timestamp = i64::from_le_bytes(raw_data[8..16].try_into().unwrap());
-    let confidence = u64::from_le_bytes(raw_data[16..24].try_into().unwrap());
-    
-    Ok(OracleData {
-        value,
-        timestamp,
-        confidence,
-        signature: [0; 64], // Will be set by caller
-        nonce: 0, // Will be set by caller
-    })
-}
-
 /// Parse Pyth oracle data format
-fn parse_pyth_format(raw_data: &[u8]) -> Result<OracleData> {
-    // Pyth format: similar to Chainlink for this implementation
+pub fn parse_pyth_format(raw_data: &[u8]) -> Result<OracleData> {
+    // Pyth Network format: value (8 bytes) + timestamp (8 bytes) + confidence (8 bytes)
     require!(raw_data.len() >= 24, InsuranceError::InvalidOracleData);
     
     let value = u64::from_le_bytes(raw_data[0..8].try_into().unwrap());
@@ -253,6 +233,81 @@ fn parse_pyth_format(raw_data: &[u8]) -> Result<OracleData> {
         signature: [0; 64], // Will be set by caller
         nonce: 0, // Will be set by caller
     })
+}
+
+/// Validate Pyth price account data format
+pub fn validate_pyth_price_data(
+    price_account_data: &[u8],
+    expected_product_id: &[u8; 32],
+) -> Result<bool> {
+    // Basic Pyth price account validation
+    require!(
+        price_account_data.len() >= 208, // Minimum Pyth price account size
+        InsuranceError::InvalidOracleData
+    );
+    
+    // Validate magic number (first 4 bytes should be Pyth magic)
+    let magic = u32::from_le_bytes([
+        price_account_data[0],
+        price_account_data[1], 
+        price_account_data[2],
+        price_account_data[3]
+    ]);
+    
+    // Pyth magic number: 0xa1b2c3d4
+    require!(
+        magic == 0xa1b2c3d4,
+        InsuranceError::InvalidOracleData
+    );
+    
+    // Additional validation can be added here for product ID matching
+    // if needed for specific insurance products
+    
+    Ok(true)
+}
+
+/// Extract price data from Pyth price account
+pub fn extract_pyth_price_data(price_account_data: &[u8]) -> Result<(i64, u64, i64)> {
+    // Validate account format first
+    validate_pyth_price_data(price_account_data, &[0; 32])?;
+    
+    // Extract price (bytes 208-215)
+    let price = i64::from_le_bytes([
+        price_account_data[208],
+        price_account_data[209],
+        price_account_data[210], 
+        price_account_data[211],
+        price_account_data[212],
+        price_account_data[213],
+        price_account_data[214],
+        price_account_data[215],
+    ]);
+    
+    // Extract confidence (bytes 216-223)
+    let confidence = u64::from_le_bytes([
+        price_account_data[216],
+        price_account_data[217],
+        price_account_data[218],
+        price_account_data[219], 
+        price_account_data[220],
+        price_account_data[221],
+        price_account_data[222],
+        price_account_data[223],
+    ]);
+    
+    // Extract timestamp (bytes 256-263)  
+    let timestamp = i64::from_le_bytes([
+        price_account_data[256],
+        price_account_data[257],
+        price_account_data[258],
+        price_account_data[259],
+        price_account_data[260], 
+        price_account_data[261],
+        price_account_data[262],
+        price_account_data[263],
+    ]);
+    
+    Ok((price, confidence, timestamp))
 }
 
 pub fn update_oracle_status(ctx: Context<UpdateOracleStatus>, is_active: bool) -> Result<()> {
