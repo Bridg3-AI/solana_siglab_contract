@@ -451,6 +451,55 @@ This is a Solana-based parametric insurance smart contract project using the Anc
 ## Contract PRD Location
 The full Product Requirements Document is located at: `.taskmaster/templates/contract-prd.txt`
 
+## Sample Insurance Policy Configuration
+
+### Game Server Downtime Insurance Example
+This is a reference configuration for creating parametric insurance policies through the smart contract:
+
+```json
+{
+  "user_input": "게임 서버 다운타임 보험",
+  "timestamp": "20250720_094101",
+  "pricing_mode": "llm_lite",
+  "core_results": {
+    "expected_loss": 361.1926569434275,
+    "gross_premium": 4452.311989626336,
+    "risk_level": "very_high",
+    "loss_ratio": 0.08112474098513049,
+    "coefficient_of_variation": 22.353391501941235
+  },
+  "validation": {
+    "passed": false,
+    "checks": {
+      "tail_padding": true,
+      "premium_consistency": true,
+      "var_tvar_consistency": true,
+      "pml_ratio_reasonable": true,
+      "cov_reasonable": false,
+      "positive_el": true,
+      "risk_load_range": false
+    }
+  },
+  "simulation_years": 1000
+}
+```
+
+### Policy Parameter Mapping
+When creating policies via `create_policy` instruction, map the above data as follows:
+
+- **coverage_amount**: Use `core_results.expected_loss` × coverage multiplier (typically 10-100x)
+- **premium_amount**: Use `core_results.gross_premium` (in lamports)
+- **insurance_type**: Custom (for game server downtime)
+- **deductible**: Typically 10-20% of coverage_amount
+- **risk_level**: Map from `core_results.risk_level` (very_high, high, medium, low)
+- **simulation_data**: Store `simulation_years` for reference
+
+### Risk Assessment Integration
+- **Loss Ratio**: `core_results.loss_ratio` - Lower values indicate more profitable policies
+- **Coefficient of Variation**: `core_results.coefficient_of_variation` - Higher values indicate more volatile risk
+- **Validation Checks**: Ensure `validation.passed = true` before policy creation
+- **Premium Consistency**: All validation checks should pass for production policies
+
 # important-instruction-reminders
 Do what has been asked; nothing more, nothing less.
 NEVER create files unless they're absolutely necessary for achieving your goal.

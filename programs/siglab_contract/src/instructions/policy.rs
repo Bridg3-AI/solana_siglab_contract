@@ -13,6 +13,12 @@ pub struct CreatePolicyParams {
     pub policy_duration_days: u32,
     pub trigger_conditions: TriggerConditions,
     pub oracle_config: OracleConfig,
+    pub risk_assessment_score: u8, // 0-100
+    pub max_payout_per_incident: u64,
+    pub waiting_period_hours: u32,
+    pub premium_payment_frequency: PremiumFrequency,
+    pub auto_renewal: bool,
+    pub metadata: String, // JSON string for additional data
 }
 
 #[derive(Accounts)]
@@ -83,6 +89,18 @@ pub fn create_policy(
         InsuranceError::InvalidParameters
     );
     
+    // Validate risk assessment score
+    require!(
+        params.risk_assessment_score <= 100,
+        InsuranceError::InvalidParameters
+    );
+    
+    // Validate max payout per incident
+    require!(
+        params.max_payout_per_incident <= params.coverage_amount,
+        InsuranceError::InvalidParameters
+    );
+    
     // Generate unique policy ID
     let policy_id = format!("POL-{}-{}", 
         Clock::get()?.unix_timestamp,
@@ -106,6 +124,12 @@ pub fn create_policy(
     policy_account.oracle_config = params.oracle_config;
     policy_account.last_premium_paid = current_time;
     policy_account.payout_history = Vec::new();
+    policy_account.risk_assessment_score = params.risk_assessment_score;
+    policy_account.max_payout_per_incident = params.max_payout_per_incident;
+    policy_account.waiting_period_hours = params.waiting_period_hours;
+    policy_account.premium_payment_frequency = params.premium_payment_frequency;
+    policy_account.auto_renewal = params.auto_renewal;
+    policy_account.metadata = params.metadata;
     policy_account.created_at = current_time;
     policy_account.updated_at = current_time;
     

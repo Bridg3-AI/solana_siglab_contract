@@ -42,6 +42,24 @@ pub struct Policy {
     /// History of payouts made
     pub payout_history: Vec<PayoutRecord>,
     
+    /// Risk assessment score (0-100)
+    pub risk_assessment_score: u8,
+    
+    /// Maximum payout per incident
+    pub max_payout_per_incident: u64,
+    
+    /// Waiting period in hours before claims can be made
+    pub waiting_period_hours: u32,
+    
+    /// Premium payment frequency
+    pub premium_payment_frequency: PremiumFrequency,
+    
+    /// Auto renewal enabled
+    pub auto_renewal: bool,
+    
+    /// Additional metadata as JSON string
+    pub metadata: String,
+    
     /// Policy creation timestamp
     pub created_at: i64,
     
@@ -66,6 +84,13 @@ pub enum PolicyStatus {
     Cancelled,
     PendingPayout,
     PaidOut,
+}
+
+#[derive(Debug, Clone, AnchorSerialize, AnchorDeserialize)]
+pub enum PremiumFrequency {
+    Monthly,
+    Quarterly,
+    Annual,
 }
 
 #[derive(Debug, Clone, AnchorSerialize, AnchorDeserialize)]
