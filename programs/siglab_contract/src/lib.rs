@@ -100,6 +100,34 @@ pub mod siglab_contract {
         instructions::admin::resume_contract(ctx)
     }
 
+    pub fn initialize_treasury(
+        ctx: Context<InitializeTreasury>,
+        minimum_reserve_ratio: u16,
+    ) -> Result<()> {
+        instructions::treasury::initialize_treasury(ctx, minimum_reserve_ratio)
+    }
+
+    pub fn deposit_funds(
+        ctx: Context<DepositFunds>,
+        amount: u64,
+        token_type: TokenType,
+    ) -> Result<()> {
+        instructions::treasury::deposit_funds(ctx, amount, token_type)
+    }
+
+    pub fn withdraw_funds(
+        ctx: Context<WithdrawFunds>,
+        amount: u64,
+        token_type: TokenType,
+        reason: WithdrawalReason,
+    ) -> Result<()> {
+        instructions::treasury::withdraw_funds(ctx, amount, token_type, reason)
+    }
+
+    pub fn update_treasury_balance(ctx: Context<UpdateTreasuryBalance>) -> Result<()> {
+        instructions::treasury::update_treasury_balance(ctx)
+    }
+
     pub fn withdraw_treasury(
         ctx: Context<WithdrawTreasury>,
         amount: u64,
